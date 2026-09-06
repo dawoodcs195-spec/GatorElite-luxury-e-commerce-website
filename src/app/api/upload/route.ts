@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { createErrorResponse, ERROR_MESSAGES, logError } from '@/lib/errors';
+import { uploadImage } from '@/lib/cloudinary';
 
 // ─── Security Configuration ─────────────────────────────────────────────────
 
@@ -25,8 +25,7 @@ const MAGIC_BYTES: Record<string, number[]> = {
   'image/webp': [0x52, 0x49, 0x46, 0x46], // RIFF header
 };
 
-// Upload directory - OUTSIDE public folder for security
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+
 
 // ─── Validation Helpers ─────────────────────────────────────────────────────
 
@@ -71,19 +70,6 @@ async function validateFileContent(buffer: ArrayBuffer): Promise<string | null> 
   return 'File content does not match expected image format';
 }
 
-function sanitizeFilename(filename: string): string {
-  // Remove any path components, special characters
-  const base = path.basename(filename)
-    .replace(/[^a-zA-Z0-9._-]/g, '')
-    .replace(/\.{2,}/g, '.');
-  
-  // Generate safe unique name
-  const ext = path.extname(base).toLowerCase() || '.jpg';
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 10);
-  
-  return `${timestamp}-${random}${ext}`;
-}
 
 // ─── POST Handler ───────────────────────────────────────────────────────────
 
@@ -122,21 +108,14 @@ export async function POST(request: NextRequest) {
       return createErrorResponse(null, contentError, 400);
     }
     
-    // 6. Create upload directory (outside public folder)
-    await mkdir(UPLOAD_DIR, { recursive: true });
+    // 6. Upload to Cloudinary
+    const result = await uploadImage(Buffer.from(bytes));
     
-    // 7. Generate safe filename
-    const filename = sanitizeFilename(file.name);
-    const filepath = path.join(UPLOAD_DIR, filename);
-    
-    // 8. Write file
-    await writeFile(filepath, Buffer.from(bytes));
-    
-    // 9. Return URL that goes through a serving endpoint (not direct file access)
+    // 7. Return Cloudinary URL
     return Response.json({
       success: true,
-      url: `/api/uploads/${filename}`,
-      filename,
+      url: result.url,
+      filename: result.publicId,
     });
     
   } catch (error) {

@@ -23,6 +23,7 @@ interface Product {
 export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -33,6 +34,10 @@ export default function ShopPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+    fetch('/api/auth/me')
+      .then((r) => r.json())
+      .then((d) => { if (d.authenticated && d.user.role === 'admin') setIsAdmin(true); })
+      .catch(() => {});
   }, []);
 
   return (
@@ -72,9 +77,11 @@ export default function ShopPage() {
           ) : products.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-cream/30 text-sm">No products yet. Add some in the admin!</p>
+              {isAdmin && (
               <Link href="/admin" className="btn-gold rounded inline-block mt-6 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gold/50">
                 <span>Admin</span>
               </Link>
+            )}
             </div>
           ) : (
             <motion.div

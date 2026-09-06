@@ -5,10 +5,10 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 const T = 120;
 const FP = '/frames/ezgif-frame-';
 const COLS = [
-  { name: 'Onyx Black', slug: 'Onyx Black', bg: '#0A0A0A', color: '#1a1a1a' },
-  { name: 'Midnight Navy', slug: 'Midnight Navy', bg: '#080D1A', color: '#1a2a4a' },
-  { name: 'Espresso Brown', slug: 'Espresso Brown', bg: '#120A07', color: '#3a2010' },
-  { name: 'Cognac Gold', slug: 'Cognac Gold', bg: '#181008', color: '#8a6a3a' },
+  { name: 'Onyx Black', slug: 'onyx-black', bg: '#0A0A0A', color: '#1a1a1a' },
+  { name: 'Midnight Navy', slug: 'midnight-navy', bg: '#080D1A', color: '#1a2a4a' },
+  { name: 'Espresso Brown', slug: 'espresso-brown', bg: '#120A07', color: '#3a2010' },
+  { name: 'Cognac Gold', slug: 'cognac-gold', bg: '#181008', color: '#8a6a3a' },
 ];
 
 // Stagger animation variants for color cards

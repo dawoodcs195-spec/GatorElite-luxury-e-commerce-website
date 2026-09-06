@@ -120,7 +120,7 @@ export const createProductSchema = z.object({
     .min(1, 'Product name is required')
     .max(200, 'Product name must be at most 200 characters')
     .trim(),
-  slug: slugSchema.optional(),
+  slug: z.union([z.literal(''), slugSchema]),
   subtitle: z
     .string()
     .max(500, 'Subtitle must be at most 500 characters')

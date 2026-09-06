@@ -56,7 +56,7 @@ const nextConfig = {
   },
   
   // External packages
-  serverExternalPackages: ['mongoose'],
+  serverExternalPackages: ['mongoose', 'cloudinary'],
   
   // Security headers
   headers: async () => [

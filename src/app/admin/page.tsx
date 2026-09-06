@@ -98,7 +98,8 @@ export default function AdminDashboard() {
       .then(r => r.json())
       .then(data => {
         if (!data.authenticated) { window.location.href = '/login'; return; }
-        setIsAdmin(data.user.role === 'admin');
+        if (data.user.role !== 'admin') { window.location.href = '/'; return; }
+        setIsAdmin(true);
         setUserName(data.user.name);
         loadAll();
       })
