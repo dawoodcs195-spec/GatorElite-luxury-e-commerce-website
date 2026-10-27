@@ -196,7 +196,7 @@ export default function StoryPage() {
               className="text-cream/50 text-sm sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10"
             >
               Born from a reverence for heritage leathercraft and an obsession with
-              perfection — GatorElite transforms the world's finest crocodile hides
+              perfection — GatorElite transforms the world&apos;s finest crocodile hides
               into belts that last a lifetime.
             </motion.p>
 

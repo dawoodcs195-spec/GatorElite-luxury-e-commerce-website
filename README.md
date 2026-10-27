@@ -125,10 +125,10 @@ cp .env.example .env.local     # fill in your values
 npm run dev                    # http://localhost:3000
 ```
 
-Seed the product catalogue (replaces existing products):
+Seed the product catalogue (replaces existing products). The endpoint needs either a signed-in admin session or the `SEED_SECRET` header:
 
 ```bash
-curl -X POST http://localhost:3000/api/seed
+curl -X POST http://localhost:3000/api/seed -H "x-seed-secret: $SEED_SECRET"
 ```
 
 Production build:
@@ -145,6 +145,7 @@ See `.env.example`. Names only; never commit real values.
 | :--- | :--- |
 | `MONGODB_URI` | MongoDB connection string |
 | `JWT_SECRET` | Signs auth tokens |
+| `SEED_SECRET` | Shared secret for `POST /api/seed` (sent as the `x-seed-secret` header). In production the seed endpoint returns 403 unless this is set |
 | `SESSION_SECRET`, `ADMIN_PASSWORD`, `VIEWER_PASSWORD` | Optional legacy admin-token guard in `middleware.ts` (active only when all three are set) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Outgoing email |
 | `CONTACT_EMAIL` | Receives contact-form notifications |
@@ -160,13 +161,13 @@ See `.env.example`. Names only; never commit real values.
 | Area | Endpoints |
 | :--- | :--- |
 | Auth | `POST /api/auth/register` · `POST /api/auth/login` · `POST /api/auth/logout` · `GET /api/auth/me` · `GET/PUT /api/auth/profile` · `POST /api/auth/forgot-password` · `POST /api/auth/reset-password` |
-| Products | `GET /api/products` · `POST /api/products` (admin) · `GET/PUT/DELETE /api/products/[id]` |
+| Products | `GET /api/products` · `POST /api/products` (admin) · `GET /api/products/[id]` · `PUT/DELETE /api/products/[id]` (admin) |
 | Orders | `GET /api/orders` (own orders; all for admin) · `POST /api/orders` · `PUT /api/orders` (admin status update) |
 | Reviews | `GET /api/reviews` · `POST /api/reviews` |
 | Contact | `POST /api/contact` · `GET /api/contact` (admin) |
-| Admin | `GET /api/admin/users` · `GET /api/admin/reviews` |
-| Media | `POST /api/upload` (Cloudinary) |
-| Data | `POST /api/seed` (resets the product catalogue) |
+| Admin | `GET /api/admin/users` (admin) · `GET /api/admin/reviews` (admin) |
+| Media | `POST /api/upload` (admin, Cloudinary) |
+| Data | `POST /api/seed` (resets the product catalogue; admin session or `x-seed-secret` header) |
 
 ## Deployment
 
@@ -175,13 +176,12 @@ Deployed on **Vercel** with **MongoDB Atlas**.
 1. Import the repository in Vercel (framework preset: Next.js).
 2. Add the environment variables above in Project Settings.
 3. Allow Vercel to reach your Atlas cluster.
-4. Deploy, then seed products once with `POST /api/seed`.
+4. Deploy. To seed products, set `SEED_SECRET` in Vercel, redeploy, call `POST /api/seed` with the `x-seed-secret` header, then remove or rotate the secret.
 
 ## Roadmap
 
 - [ ] Persist the cart across page reloads (Zustand `persist`)
 - [ ] Online payment gateway at checkout (orders are currently placed without card payment)
-- [ ] Lock down `/api/seed` to admins in all environments
 - [ ] Shared rate-limit store (e.g. Redis) for multi-instance deployments
 - [ ] Unit and end-to-end tests with a CI workflow
 

@@ -1,7 +1,8 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import { createErrorResponse, ERROR_MESSAGES, logError } from '@/lib/errors';
 import { uploadImage } from '@/lib/cloudinary';
+import { requireAdmin } from '@/lib/auth';
 
 // ─── Security Configuration ─────────────────────────────────────────────────
 
@@ -74,6 +75,12 @@ async function validateFileContent(buffer: ArrayBuffer): Promise<string | null> 
 // ─── POST Handler ───────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
+  // Only admins may upload images (used by the admin product editor).
+  const auth = await requireAdmin(request);
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;

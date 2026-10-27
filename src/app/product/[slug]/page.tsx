@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Heart, Share2, Ruler, User } from 'lucide-react';
 import StarRating, { RatingBar } from '@/components/products/StarRating';
@@ -188,7 +189,7 @@ export default function ProductPage() {
         <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy to-obsidian">
           <div className="text-center">
             <h1 className="font-serif text-3xl text-cream mb-4">Product Not Found</h1>
-            <a href="/" className="btn-gold rounded inline-block min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gold/50"><span>Go Home</span></a>
+            <Link href="/" className="btn-gold rounded inline-block min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gold/50"><span>Go Home</span></Link>
           </div>
         </main>
         <Footer />

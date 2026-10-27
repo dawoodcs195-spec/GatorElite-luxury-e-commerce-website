@@ -36,11 +36,11 @@ export default function SizeSelector({ selectedSize, onSelect }: { selectedSize:
         <div id="size-guide" className="mt-4 p-4 glass rounded-lg" role="region" aria-label="Size guide">
           <h4 className="font-serif text-sm text-gold mb-3">Size Guide</h4>
           <div className="space-y-2 text-xs text-cream/50">
-            <div className="flex justify-between"><span>28-30"</span><span>Waist 26-28"</span></div>
-            <div className="flex justify-between"><span>32-34"</span><span>Waist 30-32"</span></div>
-            <div className="flex justify-between"><span>36-38"</span><span>Waist 34-36"</span></div>
-            <div className="flex justify-between"><span>40-42"</span><span>Waist 38-40"</span></div>
-            <div className="flex justify-between"><span>44"</span><span>Waist 42-44"</span></div>
+            <div className="flex justify-between"><span>28-30&quot;</span><span>Waist 26-28&quot;</span></div>
+            <div className="flex justify-between"><span>32-34&quot;</span><span>Waist 30-32&quot;</span></div>
+            <div className="flex justify-between"><span>36-38&quot;</span><span>Waist 34-36&quot;</span></div>
+            <div className="flex justify-between"><span>40-42&quot;</span><span>Waist 38-40&quot;</span></div>
+            <div className="flex justify-between"><span>44&quot;</span><span>Waist 42-44&quot;</span></div>
           </div>
           <p className="text-cream/30 text-[10px] mt-3">Belt size = waist + 2 inches.</p>
         </div>

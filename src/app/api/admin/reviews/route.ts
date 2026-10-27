@@ -38,5 +38,6 @@ export const GET = withMiddleware(
   {
     rateLimit: RATE_LIMIT_CONFIGS.authenticated,
     requireAuth: true,
+    requiredRole: 'admin',
   }
 );

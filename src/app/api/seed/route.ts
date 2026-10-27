@@ -1,7 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 import connectDB from '@/lib/mongodb';
 import Product from '@/models/Product';
 import { createErrorResponse, getErrorMessage } from '@/lib/errors';
+import { requireAdmin } from '@/lib/auth';
 
 const products = [
   {
@@ -118,7 +120,35 @@ const products = [
   },
 ];
 
-export async function POST() {
+function hasValidSeedSecret(request: NextRequest, secret: string): boolean {
+  const provided = request.headers.get('x-seed-secret') || '';
+  if (!secret || !provided) return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(secret);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+// POST - Wipe and reseed the product catalogue.
+// Allowed only with a matching `x-seed-secret` header (SEED_SECRET) or an
+// authenticated admin session. In production it is disabled entirely unless
+// SEED_SECRET is configured.
+export async function POST(request: NextRequest) {
+  const seedSecret = process.env.SEED_SECRET || '';
+
+  if (process.env.NODE_ENV === 'production' && !seedSecret) {
+    return NextResponse.json(
+      { error: 'Seeding is disabled' },
+      { status: 403 }
+    );
+  }
+
+  if (!hasValidSeedSecret(request, seedSecret)) {
+    const auth = await requireAdmin(request);
+    if (auth instanceof NextResponse) {
+      return auth;
+    }
+  }
+
   try {
     await connectDB();
     await Product.deleteMany({});
